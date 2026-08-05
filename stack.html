@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>Stack</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { overflow: hidden; background: #1a1a2e; font-family: -apple-system, BlinkMacSystemFont, sans-serif; touch-action: none; user-select: none; -webkit-user-select: none; }
+canvas { display: block; }
+#score { position: absolute; top: 40px; left: 50%; transform: translateX(-50%); color: #fff; font-size: 52px; font-weight: 800; text-shadow: 0 2px 20px rgba(0,0,0,0.5); letter-spacing: 2px; }
+#best { position: absolute; top: 95px; left: 50%; transform: translateX(-50%); color: rgba(255,255,255,0.4); font-size: 14px; letter-spacing: 1px; text-transform: uppercase; }
+#perfect { position: absolute; top: 45%; left: 50%; transform: translate(-50%, -50%); color: #f5a623; font-size: 32px; font-weight: 800; opacity: 0; pointer-events: none; text-shadow: 0 0 30px rgba(245,166,35,0.5); letter-spacing: 3px; transition: opacity 0.15s; }
+#gameover { position: absolute; inset: 0; display: none; flex-direction: column; justify-content: center; align-items: center; background: rgba(0,0,0,0.65); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); z-index: 10; }
+#gameover .final-score { color: #fff; font-size: 72px; font-weight: 800; letter-spacing: 2px; }
+#gameover .label { color: rgba(255,255,255,0.35); font-size: 14px; letter-spacing: 3px; text-transform: uppercase; margin-top: 8px; }
+#gameover .best-label { color: rgba(255,255,255,0.25); font-size: 12px; margin-top: 20px; letter-spacing: 1px; }
+#gameover .new-best { color: #f5a623; font-size: 14px; font-weight: 700; letter-spacing: 1px; margin-top: 4px; }
+#gameover button { margin-top: 40px; padding: 14px 50px; font-size: 16px; font-weight: 600; border: 2px solid rgba(255,255,255,0.3); background: rgba(255,255,255,0.05); color: #fff; border-radius: 50px; cursor: pointer; letter-spacing: 1px; transition: all 0.2s; touch-action: manipulation; }
+#gameover button:hover { background: rgba(255,255,255,0.15); border-color: rgba(255,255,255,0.6); }
+#hint { position: absolute; bottom: 50px; left: 50%; transform: translateX(-50%); color: rgba(255,255,255,0.2); font-size: 13px; letter-spacing: 2px; text-transform: uppercase; pointer-events: none; transition: opacity 0.5s; }
+</style>
+</head>
+<body>
+
+<div id="score">0</div>
+<div id="best">Best: 0</div>
+<div id="perfect">PERFECT</div>
+<div id="gameover">
+  <div class="final-score" id="final-score">0</div>
+  <div class="label">Score</div>
+  <div class="best-label" id="best-label">Best: 0</div>
+  <div class="new-best" id="new-best" style="display:none">NEW BEST!</div>
+  <button id="restart-btn">PLAY AGAIN</button>
+</div>
+<div id="hint">Tap</div>
+
+<script type="importmap">
+{
+  "imports": {
+    "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js"
+  }
+}
+</script>
+
+<script type="module">
+import * as THREE from 'three';
+
+const BASE_HUE = 230;
+
+function getColor(step) {
+  const hue = (BASE_HUE + Math.floor(step / 10) * 30) % 360;
+  const lightness = 35 + (step % 10) * 6;
+  return new THREE.Color(`hsl(${hue}, 70%, ${lightness}%)`);
+}
+
+const scene = new THREE.Scene();
+scene.fog = new THREE.Fog(0x1a1a2e, 30, 60);
+
+const canvas = document.createElement('canvas');
+canvas.width = 2;
+canvas.height = 256;
+const ctx = canvas.getContext('2d');
+const grad = ctx.createLinearGradient(0, 0, 0, 256);
+grad.addColorStop(0, `hsl(${BASE_HUE}, 50%, 8%)`);
+grad.addColorStop(0.5, `hsl(${BASE_HUE}, 60%, 14%)`);
+grad.addColorStop(1, `hsl(${BASE_HUE}, 70%, 20%)`);
+ctx.fillStyle = grad;
+ctx.fillRect(0, 0, 2, 256);
+const bgTex = new THREE.CanvasTexture(canvas);
+scene.background = bgTex;
+
+const camera = new THREE.PerspectiveCamera(45, innerWidth / innerHeight, 0.1, 100);
+const renderer = new THREE.WebGLRenderer({ antialias: true });
+renderer.setSize(innerWidth, innerHeight);
+renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+renderer.shadowMap.enabled = true;
+renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+renderer.toneMapping = THREE.ACESFilmicToneMapping;
+renderer.toneMappingExposure = 1.2;
+document.body.prepend(renderer.domElement);
+
+const ambient = new THREE.AmbientLight(0x404060, 0.6);
+scene.add(ambient);
+const dir = new THREE.DirectionalLight(0xffffff, 2);
+dir.position.set(15, 25, 10);
+dir.castShadow = true;
+dir.shadow.mapSize.set(1024, 1024);
+dir.shadow.camera.near = 0.5;
+dir.shadow.camera.far = 60;
+dir.shadow.camera.left = -20;
+dir.shadow.camera.right = 20;
+dir.shadow.camera.top = 20;
+dir.shadow.camera.bottom = -20;
+scene.add(dir);
+const fill = new THREE.DirectionalLight(0x8888ff, 0.4);
+fill.position.set(-10, 5, -15);
+scene.add(fill);
+const rim = new THREE.DirectionalLight(0xffffff, 0.3);
+rim.position.set(0, -5, 20);
+scene.add(rim);
+const left = new THREE.DirectionalLight(0x88bbff, 1.5);
+left.position.set(-15, 10, 5);
+scene.add(left);
+
+const scoreEl = document.getElementById('score');
+const bestEl = document.getElementById('best');
+const perfectEl = document.getElementById('perfect');
+const gameoverEl = document.getElementById('gameover');
+const finalScoreEl = document.getElementById('final-score');
+const bestLabelEl = document.getElementById('best-label');
+const newBestEl = document.getElementById('new-best');
+const restartBtn = document.getElementById('restart-btn');
+const hintEl = document.getElementById('hint');
+
+let bestScore = parseInt(localStorage.getItem('stackBest') || '0');
+bestEl.textContent = `Best: ${bestScore}`;
+
+const state = {
+  score: 0,
+  gameOver: false,
+  started: false,
+  speed: 0.07,
+  direction: 1,
+  axis: 'x',
+  prev: null,
+  moving: null,
+  towerHeight: 0,
+  offcuts: [],
+};
+
+function createBase() {
+  const geo = new THREE.BoxGeometry(3, 1, 3);
+  const mat = new THREE.MeshLambertMaterial({ color: getColor(0) });
+  const mesh = new THREE.Mesh(geo, mat);
+  mesh.position.set(0, -0.5, 0);
+  mesh.castShadow = true;
+  scene.add(mesh);
+  state.prev = { mesh, x: 0, z: 0, width: 3, depth: 3 };
+  state.towerHeight = 0;
+}
+
+function spawnBlock() {
+  const prev = state.prev;
+  const geo = new THREE.BoxGeometry(prev.width, 1, prev.depth);
+  const mat = new THREE.MeshLambertMaterial({ color: getColor(state.score) });
+  const mesh = new THREE.Mesh(geo, mat);
+  mesh.position.set(prev.x, state.towerHeight + 0.5, prev.z);
+  mesh.castShadow = true;
+  scene.add(mesh);
+  state.moving = { mesh, x: prev.x, z: prev.z, width: prev.width, depth: prev.depth };
+  state.direction = 1;
+}
+
+function placeBlock() {
+  if (state.gameOver || !state.moving) return;
+  if (!state.started) {
+    state.started = true;
+    hintEl.style.opacity = '0';
+  }
+
+  const m = state.moving;
+  const p = state.prev;
+  const axis = state.axis;
+
+  let overlap, newPos, offcutSize, offcutPos;
+
+  if (axis === 'x') {
+    const mLeft = m.x - m.width / 2;
+    const mRight = m.x + m.width / 2;
+    const pLeft = p.x - p.width / 2;
+    const pRight = p.x + p.width / 2;
+
+    overlap = Math.min(mRight, pRight) - Math.max(mLeft, pLeft);
+    if (overlap <= 0.001) { doGameOver(); return; }
+
+    newPos = (Math.max(mLeft, pLeft) + Math.min(mRight, pRight)) / 2;
+
+    const leftover = m.width - overlap;
+    if (leftover > 0.01) {
+      const offDir = m.x > p.x ? 1 : -1;
+      offcutPos = newPos + offDir * (overlap / 2 + leftover / 2);
+      offcutSize = { x: leftover, z: m.depth };
+      const offcut = new THREE.Mesh(
+        new THREE.BoxGeometry(leftover, 1, m.depth),
+        new THREE.MeshLambertMaterial({ color: getColor(state.score) })
+      );
+      offcut.position.set(offcutPos, state.towerHeight + 0.5, m.z);
+      offcut.castShadow = true;
+      scene.add(offcut);
+      state.offcuts.push({ mesh: offcut, vy: 0, vz: (Math.random() - 0.5) * 0.1, vx: offDir * 0.05, rotSpeed: (Math.random() - 0.5) * 0.1 });
+    }
+
+    m.mesh.geometry.dispose();
+    m.mesh.geometry = new THREE.BoxGeometry(overlap, 1, m.depth);
+    m.mesh.position.x = newPos;
+    m.width = overlap;
+    m.x = newPos;
+  } else {
+    const mBack = m.z - m.depth / 2;
+    const mFront = m.z + m.depth / 2;
+    const pBack = p.z - p.depth / 2;
+    const pFront = p.z + p.depth / 2;
+
+    overlap = Math.min(mFront, pFront) - Math.max(mBack, pBack);
+    if (overlap <= 0.001) { doGameOver(); return; }
+
+    newPos = (Math.max(mBack, pBack) + Math.min(mFront, pFront)) / 2;
+
+    const leftover = m.depth - overlap;
+    if (leftover > 0.01) {
+      const offDir = m.z > p.z ? 1 : -1;
+      offcutPos = newPos + offDir * (overlap / 2 + leftover / 2);
+      const offcut = new THREE.Mesh(
+        new THREE.BoxGeometry(m.width, 1, leftover),
+        new THREE.MeshLambertMaterial({ color: getColor(state.score) })
+      );
+      offcut.position.set(m.x, state.towerHeight + 0.5, offcutPos);
+      offcut.castShadow = true;
+      scene.add(offcut);
+      state.offcuts.push({ mesh: offcut, vy: 0, vx: (Math.random() - 0.5) * 0.1, vz: offDir * 0.05, rotSpeed: (Math.random() - 0.5) * 0.1 });
+    }
+
+    m.mesh.geometry.dispose();
+    m.mesh.geometry = new THREE.BoxGeometry(m.width, 1, overlap);
+    m.mesh.position.z = newPos;
+    m.depth = overlap;
+    m.z = newPos;
+  }
+
+  const isPerfect = Math.abs(overlap - (axis === 'x' ? p.width : p.depth)) < 0.005;
+  if (isPerfect) {
+    state.score += 1;
+    perfectEl.style.opacity = '1';
+    setTimeout(() => { perfectEl.style.opacity = '0'; }, 400);
+  }
+
+  state.score += 1;
+  scoreEl.textContent = state.score;
+
+  if (state.score > bestScore) {
+    bestScore = state.score;
+    localStorage.setItem('stackBest', bestScore.toString());
+    bestEl.textContent = `Best: ${bestScore}`;
+  }
+
+  state.prev = { ...m, mesh: m.mesh };
+  state.towerHeight += 1;
+  state.axis = state.axis === 'x' ? 'z' : 'x';
+  state.speed += 0.0015;
+
+  spawnBlock();
+}
+
+function doGameOver() {
+  state.gameOver = true;
+  gameoverEl.style.display = 'flex';
+  finalScoreEl.textContent = state.score;
+  bestLabelEl.textContent = `Best: ${bestScore}`;
+  if (state.score >= bestScore && state.score > 0) {
+    newBestEl.style.display = 'block';
+  } else {
+    newBestEl.style.display = 'none';
+  }
+}
+
+const targetCam = { y: 4, dist: 7 };
+
+function updateCamera() {
+  const targetY = state.towerHeight + 5;
+  const targetDist = 8 + state.towerHeight * 0.5;
+  targetCam.y += (targetY - targetCam.y) * 0.06;
+  targetCam.dist += (targetDist - targetCam.dist) * 0.06;
+  const rad = Math.PI / 4;
+  camera.position.x = Math.sin(rad) * targetCam.dist;
+  camera.position.z = Math.cos(rad) * targetCam.dist;
+  camera.position.y = targetCam.y;
+  camera.lookAt(0, state.towerHeight, 0);
+}
+
+function updateOffcuts() {
+  for (let i = state.offcuts.length - 1; i >= 0; i--) {
+    const o = state.offcuts[i];
+    o.vy -= 0.02;
+    o.mesh.position.x += o.vx || 0;
+    o.mesh.position.y += o.vy;
+    o.mesh.position.z += o.vz || 0;
+    o.mesh.rotation.x += o.rotSpeed || 0;
+    o.mesh.rotation.z += o.rotSpeed || 0;
+    if (o.mesh.position.y < -20) {
+      scene.remove(o.mesh);
+      o.mesh.geometry.dispose();
+      o.mesh.material.dispose();
+      state.offcuts.splice(i, 1);
+    }
+  }
+}
+
+function animate() {
+  requestAnimationFrame(animate);
+
+  if (!state.gameOver && state.moving) {
+    const mx = state.axis === 'x' ? 3 : 0;
+    const mz = state.axis === 'z' ? 3 : 0;
+
+    if (state.axis === 'x') {
+      state.moving.x += state.speed * state.direction;
+      if (state.moving.x > state.prev.x + mx) state.direction = -1;
+      if (state.moving.x < state.prev.x - mx) state.direction = 1;
+      state.moving.mesh.position.x = state.moving.x;
+    } else {
+      state.moving.z += state.speed * state.direction;
+      if (state.moving.z > state.prev.z + mz) state.direction = -1;
+      if (state.moving.z < state.prev.z - mz) state.direction = 1;
+      state.moving.mesh.position.z = state.moving.z;
+    }
+  }
+
+  updateCamera();
+  updateOffcuts();
+  renderer.render(scene, camera);
+}
+
+function resetGame() {
+  gameoverEl.style.display = 'none';
+  state.gameOver = false;
+  state.started = false;
+  state.score = 0;
+  state.speed = 0.07;
+  state.direction = 1;
+  state.axis = 'x';
+  state.towerHeight = 0;
+  state.moving = null;
+  state.prev = null;
+
+  for (const b of [...state.offcuts]) {
+    scene.remove(b.mesh);
+    b.mesh.geometry.dispose();
+    b.mesh.material.dispose();
+  }
+  state.offcuts = [];
+  scoreEl.textContent = '0';
+  bestEl.textContent = `Best: ${bestScore}`;
+  hintEl.style.opacity = '1';
+
+  const toRemove = [];
+  scene.traverse(c => { if (c.isMesh) toRemove.push(c); });
+  for (const m of toRemove) {
+    scene.remove(m);
+    m.geometry.dispose();
+    m.material.dispose();
+  }
+
+  createBase();
+  spawnBlock();
+  targetCam.y = 4;
+  targetCam.dist = 7;
+}
+
+restartBtn.addEventListener('click', resetGame);
+restartBtn.addEventListener('touchend', (e) => { e.preventDefault(); resetGame(); });
+
+renderer.domElement.addEventListener('click', placeBlock);
+renderer.domElement.addEventListener('touchend', (e) => { e.preventDefault(); placeBlock(); });
+
+window.addEventListener('resize', () => {
+  camera.aspect = innerWidth / innerHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize(innerWidth, innerHeight);
+});
+
+createBase();
+spawnBlock();
+targetCam.y = 4;
+targetCam.dist = 7;
+camera.position.set(5, 4, 5);
+camera.lookAt(0, 0, 0);
+animate();
+</script>
+</body>
+</html>

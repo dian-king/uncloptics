@@ -1,0 +1,15 @@
+export const site = {
+  name: 'Uncloptics',
+  logo: 'IJ',
+  photographer: 'Joel Ishimwe',
+  tagline: 'Everyone is made to creating soulful imagery',
+  bio: "I am a farmer rooted in the soil, who just loves art. My heart rises with every photograph I take. Through the lens, I feel alive. Each image is a breath of purpose, each moment is a quiet revelation. I look toward the future with hope, wishing that wherever life leads me, photography will remain woven into the story of who I am.",
+  location: 'Rwanda',
+  instagram: 'https://www.instagram.com/uncl0ptics',
+  instagramHandle: '@uncl0ptics',
+  phone: '+250 783 044 372',
+  phoneHref: '+250783044372',
+  whatsapp: 'https://wa.me/250783044372',
+  email: null,
+  categories: ['Nature', 'People', 'Wildlife', 'Lifestyle'],
+}

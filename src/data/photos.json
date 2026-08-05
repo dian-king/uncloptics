@@ -1,0 +1,527 @@
+{
+  "photos": [
+    {
+      "id": "p01",
+      "title": "Untitled",
+      "category": "Nature",
+      "alt": "IMG-20251114-WA0028",
+      "featured": true,
+      "url": "photos/p01.jpg",
+      "thumb": "thumbnails/t01.jpg",
+      "source": "uncloptics"
+    },
+    {
+      "id": "p02",
+      "title": "Untitled",
+      "category": "Nature",
+      "alt": "DSC07420",
+      "featured": true,
+      "url": "photos/p02.jpg",
+      "thumb": "thumbnails/t02.jpg",
+      "source": "uncloptics"
+    },
+    {
+      "id": "p03",
+      "title": "Search the World for Gold",
+      "category": "Nature",
+      "alt": "Somesearchtheworldforgoldbutthewisesearchfortheirsong.Becausegoldcanbestolenb",
+      "featured": false,
+      "url": "photos/p03.jpg",
+      "thumb": "thumbnails/t03.jpg",
+      "source": "uncloptics"
+    },
+    {
+      "id": "p04",
+      "title": "Serenity of Nature",
+      "category": "Nature",
+      "alt": "Theserenityofnatureisareminderofourplaceintheworldphotoofthedaynaturephoto",
+      "featured": false,
+      "url": "photos/p04.jpg",
+      "thumb": "thumbnails/t04.jpg",
+      "source": "uncloptics"
+    },
+    {
+      "id": "p05",
+      "title": "Untitled",
+      "category": "Nature",
+      "alt": "IMG_2079",
+      "featured": false,
+      "url": "photos/p05.jpg",
+      "thumb": "thumbnails/t05.jpg",
+      "source": "uncloptics"
+    },
+    {
+      "id": "p06",
+      "title": "Serenity of Nature",
+      "category": "Nature",
+      "alt": "Theserenityofnatureisareminderofourplaceintheworldphotoofthedaynaturephoto1",
+      "featured": false,
+      "url": "photos/p06.jpg",
+      "thumb": "thumbnails/t06.jpg",
+      "source": "uncloptics"
+    },
+    {
+      "id": "p07",
+      "title": "Untitled",
+      "category": "Nature",
+      "alt": "54440709020_d2a5ddcf81_o",
+      "featured": false,
+      "url": "photos/p07.jpg",
+      "thumb": "thumbnails/t07.jpg",
+      "source": "uncloptics"
+    },
+    {
+      "id": "p08",
+      "title": "Untitled",
+      "category": "Nature",
+      "alt": "DSC07420",
+      "featured": false,
+      "url": "photos/p08.jpg",
+      "thumb": "thumbnails/t08.jpg",
+      "source": "uncloptics"
+    },
+    {
+      "id": "p09",
+      "title": "Untitled",
+      "category": "Nature",
+      "alt": "DSC03605",
+      "featured": false,
+      "url": "photos/p09.jpg",
+      "thumb": "thumbnails/t09.jpg",
+      "source": "uncloptics"
+    },
+    {
+      "id": "p10",
+      "title": "Untitled",
+      "category": "People",
+      "alt": "DSC03676",
+      "featured": false,
+      "url": "photos/p10.jpg",
+      "thumb": "thumbnails/t10.jpg",
+      "source": "uncloptics"
+    },
+    {
+      "id": "p11",
+      "title": "Untitled",
+      "category": "People",
+      "alt": "1769765474490",
+      "featured": false,
+      "url": "photos/p11.jpg",
+      "thumb": "thumbnails/t11.jpg",
+      "source": "uncloptics"
+    },
+    {
+      "id": "p12",
+      "title": "Untitled",
+      "category": "People",
+      "alt": "54668830983_7c8ca72386_o",
+      "featured": false,
+      "url": "photos/p12.jpg",
+      "thumb": "thumbnails/t12.jpg",
+      "source": "uncloptics"
+    },
+    {
+      "id": "p13",
+      "title": "Untitled",
+      "category": "People",
+      "alt": "_DSC6685",
+      "featured": false,
+      "url": "photos/p13.jpg",
+      "thumb": "thumbnails/t13.jpg",
+      "source": "uncloptics"
+    },
+    {
+      "id": "p14",
+      "title": "Untitled",
+      "category": "People",
+      "alt": "IMG_2068",
+      "featured": false,
+      "url": "photos/p14.jpg",
+      "thumb": "thumbnails/t14.jpg",
+      "source": "uncloptics"
+    },
+    {
+      "id": "p15",
+      "title": "Untitled",
+      "category": "People",
+      "alt": "_DSC7576",
+      "featured": false,
+      "url": "photos/p15.jpg",
+      "thumb": "thumbnails/t15.jpg",
+      "source": "uncloptics"
+    },
+    {
+      "id": "p16",
+      "title": "Untitled",
+      "category": "People",
+      "alt": "_DSC6924",
+      "featured": false,
+      "url": "photos/p16.jpg",
+      "thumb": "thumbnails/t16.jpg",
+      "source": "uncloptics"
+    },
+    {
+      "id": "p17",
+      "title": "Untitled",
+      "category": "People",
+      "alt": "DSC03006",
+      "featured": true,
+      "url": "photos/p17.jpg",
+      "thumb": "thumbnails/t17.jpg",
+      "source": "uncloptics"
+    },
+    {
+      "id": "p18",
+      "title": "Untitled",
+      "category": "People",
+      "alt": "_DSC7685_001hr",
+      "featured": false,
+      "url": "photos/p18.jpg",
+      "thumb": "thumbnails/t18.jpg",
+      "source": "uncloptics"
+    },
+    {
+      "id": "p19",
+      "title": "Untitled",
+      "category": "People",
+      "alt": "DSC03657",
+      "featured": false,
+      "url": "photos/p19.jpg",
+      "thumb": "thumbnails/t19.jpg",
+      "source": "uncloptics"
+    },
+    {
+      "id": "p20",
+      "title": "This Is a Man's World",
+      "category": "People",
+      "alt": "ThisisamansworldButitwouldntbenothingwithoutawomanphotoofthedayph",
+      "featured": false,
+      "url": "photos/p20.jpg",
+      "thumb": "thumbnails/t20.jpg",
+      "source": "uncloptics"
+    },
+    {
+      "id": "p21",
+      "title": "Untitled",
+      "category": "People",
+      "alt": "_DSC6672",
+      "featured": false,
+      "url": "photos/p21.jpg",
+      "thumb": "thumbnails/t21.jpg",
+      "source": "uncloptics"
+    },
+    {
+      "id": "p22",
+      "title": "Untitled",
+      "category": "People",
+      "alt": "DSC02835",
+      "featured": false,
+      "url": "photos/p22.jpg",
+      "thumb": "thumbnails/t22.jpg",
+      "source": "uncloptics"
+    },
+    {
+      "id": "p23",
+      "title": "Untitled",
+      "category": "People",
+      "alt": "_DSC6797",
+      "featured": false,
+      "url": "photos/p23.jpg",
+      "thumb": "thumbnails/t23.jpg",
+      "source": "uncloptics"
+    },
+    {
+      "id": "p24",
+      "title": "Untitled",
+      "category": "People",
+      "alt": "_DSC6735",
+      "featured": false,
+      "url": "photos/p24.jpg",
+      "thumb": "thumbnails/t24.jpg",
+      "source": "uncloptics"
+    },
+    {
+      "id": "p25",
+      "title": "Untitled",
+      "category": "People",
+      "alt": "DSC08579",
+      "featured": true,
+      "url": "photos/p25.jpg",
+      "thumb": "thumbnails/t25.jpg",
+      "source": "uncloptics"
+    },
+    {
+      "id": "p26",
+      "title": "Free-dom",
+      "category": "Wildlife",
+      "alt": "Free-domuncl0ptics1",
+      "featured": false,
+      "url": "photos/p26.jpg",
+      "thumb": "thumbnails/t26.jpg",
+      "source": "uncloptics"
+    },
+    {
+      "id": "p27",
+      "title": "Camel eye",
+      "category": "Wildlife",
+      "alt": "IMG-20251114-WA0025",
+      "featured": false,
+      "url": "photos/p27.jpg",
+      "thumb": "thumbnails/t27.jpg",
+      "source": "uncloptics",
+      "description": ""
+    },
+    {
+      "id": "p28",
+      "title": "Untitled",
+      "category": "Wildlife",
+      "alt": "DSC07922",
+      "featured": false,
+      "url": "photos/p28.jpg",
+      "thumb": "thumbnails/t28.jpg",
+      "source": "uncloptics"
+    },
+    {
+      "id": "p29",
+      "title": "Untitled",
+      "category": "Wildlife",
+      "alt": "IMG-20251114-WA0023",
+      "featured": false,
+      "url": "photos/p29.jpg",
+      "thumb": "thumbnails/t29.jpg",
+      "source": "uncloptics"
+    },
+    {
+      "id": "p30",
+      "title": "Untitled",
+      "category": "Wildlife",
+      "alt": "IMG-20251114-WA0020",
+      "featured": false,
+      "url": "photos/p30.jpg",
+      "thumb": "thumbnails/t30.jpg",
+      "source": "uncloptics"
+    },
+    {
+      "id": "p31",
+      "title": "Untitled",
+      "category": "Wildlife",
+      "alt": "DSC07420",
+      "featured": false,
+      "url": "photos/p31.jpg",
+      "thumb": "thumbnails/t31.jpg",
+      "source": "uncloptics"
+    },
+    {
+      "id": "p32",
+      "title": "Untitled",
+      "category": "Wildlife",
+      "alt": "DSC07727",
+      "featured": false,
+      "url": "photos/p32.jpg",
+      "thumb": "thumbnails/t32.jpg",
+      "source": "uncloptics"
+    },
+    {
+      "id": "p33",
+      "title": "Untitled",
+      "category": "Wildlife",
+      "alt": "DSC07829",
+      "featured": true,
+      "url": "photos/p33.jpg",
+      "thumb": "thumbnails/t33.jpg",
+      "source": "uncloptics"
+    },
+    {
+      "id": "p34",
+      "title": "Free-dom",
+      "category": "Wildlife",
+      "alt": "Free-domuncl0ptics",
+      "featured": false,
+      "url": "photos/p34.jpg",
+      "thumb": "thumbnails/t34.jpg",
+      "source": "uncloptics"
+    },
+    {
+      "id": "p35",
+      "title": "Untitled",
+      "category": "Wildlife",
+      "alt": "IMG_2079",
+      "featured": false,
+      "url": "photos/p35.jpg",
+      "thumb": "thumbnails/t35.jpg",
+      "source": "uncloptics"
+    },
+    {
+      "id": "p36",
+      "title": "This Is a Man's World",
+      "category": "Lifestyle",
+      "alt": "ThisisamansworldButitwouldntbenothingwithoutawomanphotoofthedayph1",
+      "featured": false,
+      "url": "photos/p36.jpg",
+      "thumb": "thumbnails/t36.jpg",
+      "source": "uncloptics"
+    },
+    {
+      "id": "p37",
+      "title": "Untitled",
+      "category": "Lifestyle",
+      "alt": "pic.jpg",
+      "featured": false,
+      "url": "photos/p37.jpg",
+      "thumb": "thumbnails/t37.jpg",
+      "source": "uncloptics"
+    },
+    {
+      "id": "p38",
+      "title": "Untitled",
+      "category": "Lifestyle",
+      "alt": "DSC02492",
+      "featured": false,
+      "url": "photos/p38.jpg",
+      "thumb": "thumbnails/t38.jpg",
+      "source": "uncloptics"
+    },
+    {
+      "id": "p39",
+      "title": "Untitled",
+      "category": "Lifestyle",
+      "alt": "IMG_2084",
+      "featured": false,
+      "url": "photos/p39.jpg",
+      "thumb": "thumbnails/t39.jpg",
+      "source": "uncloptics"
+    },
+    {
+      "id": "p40",
+      "title": "Search the World for Gold",
+      "category": "Lifestyle",
+      "alt": "Somesearchtheworldforgoldbutthewisesearchfortheirsong.Becausegoldcanbestolenb",
+      "featured": false,
+      "url": "photos/p40.jpg",
+      "thumb": "thumbnails/t40.jpg",
+      "source": "uncloptics"
+    },
+    {
+      "id": "p41",
+      "title": "Untitled",
+      "category": "Lifestyle",
+      "alt": "54826811521_c47c9b333b_o",
+      "featured": true,
+      "url": "photos/p41.jpg",
+      "thumb": "thumbnails/t41.jpg",
+      "source": "uncloptics"
+    },
+    {
+      "id": "p42",
+      "title": "Untitled",
+      "category": "Lifestyle",
+      "alt": "DSC07514",
+      "featured": false,
+      "url": "photos/p42.jpg",
+      "thumb": "thumbnails/t42.jpg",
+      "source": "uncloptics"
+    },
+    {
+      "id": "p43",
+      "title": "Untitled",
+      "category": "Lifestyle",
+      "alt": "DSC07492",
+      "featured": false,
+      "url": "photos/p43.jpg",
+      "thumb": "thumbnails/t43.jpg",
+      "source": "uncloptics"
+    },
+    {
+      "id": "p44",
+      "title": "Kigali",
+      "category": "Lifestyle",
+      "alt": "KGLAcityofhustleandbustleyetasanctuaryplace",
+      "featured": false,
+      "url": "photos/p44.jpg",
+      "thumb": "thumbnails/t44.jpg",
+      "source": "uncloptics"
+    },
+    {
+      "id": "p45",
+      "title": "Untitled",
+      "category": "Lifestyle",
+      "alt": "1769765474490",
+      "featured": false,
+      "url": "photos/p45.jpg",
+      "thumb": "thumbnails/t45.jpg",
+      "source": "uncloptics"
+    },
+    {
+      "id": "p46",
+      "title": "Untitled",
+      "category": "Lifestyle",
+      "alt": "54827055164_b3a89c357c_o",
+      "featured": false,
+      "url": "photos/p46.jpg",
+      "thumb": "thumbnails/t46.jpg",
+      "source": "uncloptics"
+    },
+    {
+      "id": "p47",
+      "title": "Untitled",
+      "category": "Lifestyle",
+      "alt": "IMG_2080_1",
+      "featured": false,
+      "url": "photos/p47.jpg",
+      "thumb": "thumbnails/t47.jpg",
+      "source": "uncloptics"
+    },
+    {
+      "id": "p48",
+      "title": "Untitled",
+      "category": "Lifestyle",
+      "alt": "IMG_2085",
+      "featured": false,
+      "url": "photos/p48.jpg",
+      "thumb": "thumbnails/t48.jpg",
+      "source": "uncloptics"
+    },
+    {
+      "id": "p49",
+      "title": "Untitled",
+      "category": "Lifestyle",
+      "alt": "54668603546_9070a1668b_o",
+      "featured": true,
+      "url": "photos/p49.jpg",
+      "thumb": "thumbnails/t49.jpg",
+      "source": "uncloptics"
+    },
+    {
+      "id": "p50",
+      "title": "Untitled",
+      "category": "Lifestyle",
+      "alt": "IMG_2074",
+      "featured": false,
+      "url": "photos/p50.jpg",
+      "thumb": "thumbnails/t50.jpg",
+      "source": "uncloptics"
+    },
+    {
+      "id": "p51",
+      "title": "G.R.I.N.D",
+      "category": "Lifestyle",
+      "alt": "G.R.I.N.D",
+      "featured": false,
+      "url": "photos/p51.jpg",
+      "thumb": "thumbnails/t51.jpg",
+      "source": "uncloptics"
+    }
+  ],
+  "categories": [
+    "Nature",
+    "People",
+    "Wildlife",
+    "Lifestyle"
+  ],
+  "featuredCategories": [
+    "Lifestyle",
+    "Wildlife",
+    "People",
+    "Nature"
+  ]
+}
