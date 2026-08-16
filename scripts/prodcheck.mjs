@@ -54,7 +54,7 @@ async function main() {
 
   await page.goto(BASE + '/#/contact', { waitUntil: 'domcontentloaded', timeout: 15000 })
   await page.waitForSelector('.contact-grid', { timeout: 10000 })
-  await page.goto(BASE + '/#/admin', { waitUntil: 'domcontentloaded', timeout: 15000 })
+  await page.goto(BASE + '/#/studio-vault', { waitUntil: 'domcontentloaded', timeout: 15000 })
   await page.waitForSelector('.login-card', { timeout: 10000 })
 
   console.log(`tiles: ${tiles}, loaded images: ${imgs - broken}/${imgs}`)

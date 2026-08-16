@@ -35,7 +35,7 @@ export default function App() {
           <Route path="/portfolio/:category" element={<CategoryPage />} />
           <Route path="/about" element={<AboutPage />} />
           <Route path="/contact" element={<ContactPage />} />
-          <Route path="/admin" element={<AdminPage />} />
+          <Route path="/studio-vault" element={<AdminPage />} />
         </Routes>
       </main>
       <Footer />

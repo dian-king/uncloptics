@@ -67,8 +67,40 @@ npm run serve   # serve the built site + upload API on http://localhost:3000
 The build itself is fully static — deploy `dist/` to any static host (Netlify, Vercel,
 GitHub Pages, nginx, S3, …). The `base: './'` config and hash-based routing mean it also
 works from a sub-path or opened straight from disk. Only the **Studio uploads** need the
-local API; on a purely static host the site keeps working but the studio falls back to
+API; on a purely static host the site keeps working but the studio falls back to
 read-only mode.
+
+---
+
+## Deploying to Vercel
+
+The repo is wired for **Vercel** with a working studio: photos upload **directly into
+[Vercel Blob storage](https://vercel.com/docs/storage/vercel-blob)** (so there is no
+request-body size limit on uploads), thumbnails and the photo manifest live in Blob too,
+and the API runs as a single serverless function. Static gallery photos ship with the
+site as before.
+
+1. Push this repo to GitHub, then import it in the Vercel dashboard (framework: **Vite**
+   is auto-detected; `vercel.json` pins it explicitly).
+2. Create a **Blob store** in the Vercel project (Storage → Create → Blob). Vercel
+   automatically injects `BLOB_READ_WRITE_TOKEN`, which flips the API into cloud mode.
+3. Add the **`ADMIN_PASSWORD`** environment variable in Project Settings → Environment
+   Variables (Production/Preview/Development). Without it the default `lumiere` is used
+   and the API logs a warning.
+4. Deploy. On `https://<project>.vercel.app/#/studio-vault`, sign in and upload normally —
+   files go browser → Blob directly, and the function only receives small JSON metadata.
+
+Notes:
+
+- Uploads may be any size (Blob accepts up to 5 TB per file); the serverless function
+  only ever handles the thumbnail bytes.
+- Signed-in sessions use stateless HMAC tokens (12-hour expiry) because serverless
+  functions can't keep in-memory sessions — log in again after that.
+- The optional **`TOKEN_SECRET`** env var overrides the default signing secret (which is
+  derived from `ADMIN_PASSWORD`). Set it to invalidate all existing sessions at once.
+- The bundled 51 photos keep relative URLs (served from the site's static files);
+  uploaded photos get absolute Blob URLs. Deleting a photo also deletes its Blob objects.
+
 
 ---
 
@@ -91,14 +123,16 @@ with `npm run photos` (`scripts/fetch-demo.mjs`), which rewrites the manifest an
 
 ## Using the Studio (admin)
 
-> **Admin password: `lumiere`**
+> The studio is **intentionally hidden** — there is no link in the navigation. Reach the
+> login by clicking the **logo in the footer 5 times** (within a couple of seconds), or by
+> visiting `/#/studio-vault` directly.
 
 The studio posts photos **directly into the project** through a small local API
 (`server/api.mjs`). Start the dev server (`npm run dev`) or production server
 (`npm run serve`) so the API is available, then:
 
-1. Go to `/#/admin` (link in the nav: **Studio**).
-2. Sign in with the password **`lumiere`** (see _Customization_ to change it).
+1. Open the login via the footer-logo shortcut or `/#/studio-vault`.
+2. Sign in with the admin password (default `lumiere` — see _Customization_).
 3. Drag & drop images (jpg / png / webp) or click to browse — each becomes a pending item
    in the list.
 4. Edit each item's **title** and **category**; remove any you don't want.
@@ -115,8 +149,11 @@ The studio posts photos **directly into the project** through a small local API
    (the site's featured picks), then click **Save changes** to write it to the manifest.
    **Delete photo** removes it and its files. Reload the page to see new photos in the gallery.
 
-> If the API is unreachable (plain static hosting), the studio shows a notice and the
-> **Post** buttons are disabled — the gallery still works from the bundled manifest.
+> The login is verified **server-side** (`POST /api/auth` issues a session token that every
+> write request must present) — the password is never shipped to the browser. On a purely
+> static host there is no server, so the studio shows a "server unreachable" banner and
+> uploads fail gracefully; the gallery still works from the bundled manifest. Sign out from
+> the **Sign out** button in the studio toolbar.
 
 ---
 
@@ -125,8 +162,11 @@ The studio posts photos **directly into the project** through a small local API
 ```
 ├── index.html
 ├── vite.config.js
+├── vercel.json            # Vercel: framework + build/output config
+├── api/
+│   └── [...slug].mjs      # Vercel catch-all function that mounts the API
 ├── server/
-│   ├── api.mjs            # local upload API (GET/POST/DELETE /api/photos)
+│   ├── api.mjs            # API — local filesystem mode (dev) or Vercel Blob mode (cloud)
 │   ├── vite-plugin.mjs    # mounts the API into vite dev & preview
 │   └── index.mjs          # standalone production server (npm run serve)
 ├── public/
@@ -147,7 +187,8 @@ The studio posts photos **directly into the project** through a small local API
     ├── lib/scroll.js    # Lenis singleton + scroll helpers
     ├── hooks/usePhotos.js
     ├── components/      Nav, Footer, HeroScene, Gallery, CategoryTiles,
-    │                    Lightbox, ParallaxImage, Reveal, AdminGallery
+    │                    Lightbox, ParallaxImage, Reveal, AdminGallery,
+    │                    AdminCollections
     └── pages/           Home, PortfolioPage, CategoryPage, AboutPage,
                          ContactPage, AdminPage
 ```
@@ -171,14 +212,31 @@ Other common edits:
 - **Brand, bio, contact & socials** — `src/data/site.js` (site name, photographer,
   tagline, bio, Instagram, WhatsApp, phone). Update here, not per-page.
 - **Contact details** — `src/data/site.js`, rendered on the contact page and in the footer.
-- **Categories & featured photos** — edit `src/data/photos.json`
-  (`"featured": true` picks the photos shown in the hero).
-- **Admin password** — computed as a SHA-256 hash stored in
-  `src/pages/AdminPage.jsx` (`ADMIN_HASH`). Generate a new hash with:
+- **Categories & featured photos** — edit `src/data/photos.json`: `"featured": true` marks a
+  photo as featured, the `featuredCategories` array controls which collections appear on the
+  home page, and the `hero` array lists (in order) which photo ids the 3D hero shows.
+- **Canonical URL / social preview** — `index.html` holds the canonical link, `og:image`,
+  and JSON-LD `url`; all point at `https://uncloptics.vercel.app/`. Update them if the site
+  is served from a different domain.
+- **Admin password** — set the `ADMIN_PASSWORD` environment variable when starting the
+  server (default: `lumiere`) or in the Vercel dashboard for deployed sites. Example:
 
   ```bash
-  node -e "console.log(require('crypto').createHash('sha256').update('YOUR_PASSWORD').digest('hex'))"
+  # PowerShell
+  $env:ADMIN_PASSWORD = "your-strong-password"
+  npm run dev
   ```
+
+  ```bash
+  # cmd / bash
+  set ADMIN_PASSWORD=your-strong-password
+  npm run dev
+  ```
+
+  The server prints a warning on startup when it falls back to the default password, and
+  the login is verified server-side, so the password never ships in the front-end bundle.
+  The login endpoint is rate-limited (5 failed attempts per 10 minutes locks that IP out
+  for 10 minutes) and session tokens expire after 12 hours.
 
 ---
 

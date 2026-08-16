@@ -4,21 +4,26 @@ import Reveal from '../components/Reveal'
 import AdminGallery from '../components/AdminGallery'
 import AdminCollections from '../components/AdminCollections'
 import { loadPending, savePending, clearPending } from '../lib/pendingStore'
+import { apiFetch, getToken, setToken, clearToken } from '../lib/api'
 import { site } from '../data/site'
 
-const ADMIN_HASH = 'c905fb6e3bdbad92354471ca90e7ad180dab721f6e095225c82c0f34c7409bdc'
-const AUTH_KEY = 'lumiere:auth'
-const API = `${import.meta.env.BASE_URL}api/photos`
+const API = 'api/photos'
 
-async function sha256(text) {
-  const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(text))
-  return Array.from(new Uint8Array(buf))
-    .map((b) => b.toString(16).padStart(2, '0'))
-    .join('')
+const EXT_BY_MIME = {
+  'image/jpeg': 'jpg',
+  'image/jpg': 'jpg',
+  'image/png': 'png',
+  'image/webp': 'webp',
+  'image/gif': 'gif',
+  'image/avif': 'avif',
 }
 
 function slugify(s) {
   return s.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '') || 'photo'
+}
+
+function handleUploadUrl() {
+  return new URL('api/upload-token', window.location.href).href
 }
 
 function Login({ onAuthed }) {
@@ -30,12 +35,17 @@ function Login({ onAuthed }) {
     e.preventDefault()
     setBusy(true)
     setError('')
-    const hash = await sha256(pw)
-    if (hash === ADMIN_HASH) {
-      sessionStorage.setItem(AUTH_KEY, '1')
-      onAuthed()
-    } else {
-      setError('That password is not correct.')
+    try {
+      const res = await apiFetch('api/auth', { method: 'POST', body: { password: pw } })
+      const data = await res.json().catch(() => ({}))
+      if (res.ok && data.token) {
+        setToken(data.token)
+        onAuthed()
+      } else {
+        setError('That password is not correct.')
+      }
+    } catch {
+      setError('Could not reach the server — is it running?')
     }
     setBusy(false)
   }
@@ -51,15 +61,14 @@ function Login({ onAuthed }) {
         <button type="submit" className="btn" disabled={busy || !pw}>
           Enter studio
         </button>
-        <p className="form-note">Demo password: <code style={{ color: 'var(--accent)' }}>lumiere</code></p>
       </form>
     </div>
   )
 }
 
 export default function AdminPage() {
-  const { photos, categories, featuredCategories, serverOk, refresh } = usePhotos()
-  const [authed, setAuthed] = useState(() => sessionStorage.getItem(AUTH_KEY) === '1')
+  const { photos, categories, featuredCategories, serverOk, checked, refresh, uploadMode } = usePhotos()
+  const [authed, setAuthed] = useState(() => !!getToken())
   const [pending, setPending] = useState([])
   const [dragging, setDragging] = useState(false)
   const [error, setError] = useState('')
@@ -136,15 +145,31 @@ export default function AdminPage() {
     let posted = 0
     let failed = 0
     for (const item of pending) {
-      const fd = new FormData()
-      fd.append('file', item.file)
-      fd.append('title', item.title)
-      fd.append('category', item.category)
-      fd.append('alt', item.title)
       try {
-        const res = await fetch(API, { method: 'POST', body: fd })
-        if (res.ok) posted++
-        else failed++
+        if (uploadMode === 'blob') {
+          const { upload } = await import('@vercel/blob/client')
+          const ext = EXT_BY_MIME[item.file.type] || 'jpg'
+          const pathname = `photos/${slugify(item.title)}-${Date.now()}.${ext}`
+          const blob = await upload(pathname, item.file, {
+            access: 'public',
+            handleUploadUrl: handleUploadUrl(),
+          })
+          const res = await apiFetch(`${API}`, {
+            method: 'POST',
+            body: { url: blob.url, title: item.title, category: item.category, alt: item.title },
+          })
+          if (res.ok) posted++
+          else failed++
+        } else {
+          const fd = new FormData()
+          fd.append('file', item.file)
+          fd.append('title', item.title)
+          fd.append('category', item.category)
+          fd.append('alt', item.title)
+          const res = await apiFetch(`${API}`, { method: 'POST', body: fd })
+          if (res.ok) posted++
+          else failed++
+        }
       } catch {
         failed++
       }
@@ -160,7 +185,7 @@ export default function AdminPage() {
   const removePhoto = async (photo) => {
     setDeletingId(photo.id)
     try {
-      const res = await fetch(`${API}/${photo.id}`, { method: 'DELETE' })
+      const res = await apiFetch(`${API}/${photo.id}`, { method: 'DELETE' })
       if (!res.ok) setError('Could not delete that photo.')
     } catch {
       setError('Delete failed — is the server running?')
@@ -170,8 +195,9 @@ export default function AdminPage() {
   }
 
   const logout = () => {
+    apiFetch('api/auth/logout', { method: 'POST' }).catch(() => {})
+    clearToken()
     clearPending()
-    sessionStorage.removeItem(AUTH_KEY)
     setAuthed(false)
     setPending([])
   }
@@ -186,26 +212,52 @@ export default function AdminPage() {
             Select photos, give them a title and category, then hit Post — they go straight into the gallery.
           </p>
         </div>
-        {authed && (
-          <button className="btn secondary" onClick={logout}>Sign out</button>
-        )}
       </Reveal>
 
       {!authed ? (
-        <Reveal>
-          <Login onAuthed={() => setAuthed(true)} />
-        </Reveal>
-      ) : !serverOk ? (
-        <Reveal className="admin-export">
-          <h4>Server offline</h4>
-          <p className="form-note" style={{ marginTop: 8 }}>
-            The Studio needs the local server to write files into the project. Start it with{' '}
-            <code style={{ color: 'var(--accent)' }}>npm run dev</code> (or{' '}
-            <code style={{ color: 'var(--accent)' }}>npm run serve</code> after a build) and reload this page.
-          </p>
-        </Reveal>
+        !checked ? (
+          <Reveal>
+            <p className="form-note" style={{ padding: '40px 0', textAlign: 'center' }}>Checking connection…</p>
+          </Reveal>
+        ) : serverOk ? (
+          <Reveal>
+            <Login onAuthed={() => setAuthed(true)} />
+          </Reveal>
+        ) : (
+          <Reveal className="admin-export">
+            <h4>Studio unavailable</h4>
+            <p className="form-note" style={{ marginTop: 8 }}>
+              The studio needs the site's API server, which isn't reachable from this host.
+              Run it locally with{' '}
+              <code style={{ color: 'var(--accent)' }}>npm run dev</code> (or{' '}
+              <code style={{ color: 'var(--accent)' }}>npm run serve</code> after a build) to
+              upload and manage photos.
+            </p>
+          </Reveal>
+        )
       ) : (
         <Reveal>
+          <div className="studio-toolbar">
+            <span className="studio-status">
+              <span className={`status-dot ${serverOk ? 'online' : ''}`} />
+              Signed in{serverOk ? ' · server online' : ' · server unreachable'}
+            </span>
+            <button className="btn secondary" onClick={logout}>
+              Sign out
+            </button>
+          </div>
+
+          {checked && !serverOk && (
+            <div className="admin-export">
+              <h4>Server unreachable</h4>
+              <p className="form-note" style={{ marginTop: 8 }}>
+                Changes won't be saved until the site's API server is reachable. Run it locally
+                with <code style={{ color: 'var(--accent)' }}>npm run dev</code> (or{' '}
+                <code style={{ color: 'var(--accent)' }}>npm run serve</code> after a build).
+              </p>
+            </div>
+          )}
+
           <div
             className={`dropzone ${dragging ? 'dragging' : ''}`}
             onClick={() => inputRef.current?.click()}

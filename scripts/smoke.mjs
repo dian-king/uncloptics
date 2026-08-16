@@ -51,7 +51,10 @@ async function main() {
 
   page.on('pageerror', (e) => fail(`pageerror: ${e.message}`))
   page.on('console', (m) => {
-    if (m.type() === 'error') fail(`console.error: ${m.text().slice(0, 200)}`)
+    if (m.type() !== 'error') return
+    const text = m.text()
+    if (/Failed to load resource: the server responded with a status of 401/.test(text)) return
+    fail(`console.error: ${text.slice(0, 200)}`)
   })
 
   console.log('home:')
@@ -145,13 +148,11 @@ async function main() {
 
   console.log('admin:')
   await check('login gate rejects wrong password', async () => {
-    await page.goto(BASE + '/#/admin', { waitUntil: 'domcontentloaded', timeout: 15000 })
+    await page.goto(BASE + '/#/studio-vault', { waitUntil: 'domcontentloaded', timeout: 15000 })
     await page.waitForSelector('.login-card', { timeout: 10000 })
     await page.type('input[type=password]', 'wrong')
     await page.click('.login-card .btn')
-    await sleep(600)
-    const hasError = await page.$('.login-error')
-    if (!hasError) throw new Error('no error shown for wrong password')
+    await page.waitForSelector('.login-error', { timeout: 10000 })
   })
 
   await check('login with demo password unlocks studio', async () => {

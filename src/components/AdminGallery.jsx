@@ -1,9 +1,8 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { flushSync } from 'react-dom'
 import Lightbox from './Lightbox'
-
-const base = import.meta.env.BASE_URL
-const API = `${base}api/photos`
+import { apiFetch } from '../lib/api'
+import { photoUrl } from '../lib/photoUrl'
 
 const EMPTY = { title: '', category: '', description: '', featured: false }
 const STEP = 60
@@ -35,7 +34,7 @@ function DrumFace({ photo, angle, depth, width, onFaceClick, imgKey }) {
     >
       <img
         key={imgKey}
-        src={`${base}${photo.thumb}`}
+        src={photoUrl(photo.thumb)}
         alt={photo.alt}
         draggable={false}
         onContextMenu={(e) => e.preventDefault()}
@@ -173,10 +172,9 @@ export default function AdminGallery({ photos, deletingId, onDelete, onRefresh, 
     setSaved(false)
     setSaveError('')
     try {
-      const res = await fetch(`${API}/${selected.id}`, {
+      const res = await apiFetch(`api/photos/${selected.id}`, {
         method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(draft),
+        body: draft,
       })
       if (!res.ok) throw new Error(`api ${res.status}`)
       setSaved(true)
@@ -205,47 +203,49 @@ export default function AdminGallery({ photos, deletingId, onDelete, onRefresh, 
       <div className="drum-pane">
         <div className="drum-stage">
           <span className="drum-rim" aria-hidden="true" />
-          <button
-            className="drum-nav drum-prev"
-            onClick={() => spin(-1)}
-            aria-label="Previous photo"
-            title="Previous (←)"
-          >
-            ◀
-          </button>
-          <div
-            ref={drumRef}
-            className="drum"
-            role="button"
-            aria-label="Posted photos on a rotating tube; click the front image to zoom"
-            tabIndex={0}
-            onKeyDown={(e) => {
-              if ((e.key === 'Enter' || e.key === ' ') && !spinning.current) {
-                e.preventDefault()
-                setZoomIndex(idx)
-              }
-            }}
-          >
-            {faces.map((f) => (
-              <DrumFace
-                key={f.angle}
-                photo={f.photo}
-                angle={f.angle}
-                depth={RADIUS}
-                width={WIDTH}
-                imgKey={f.offset === 0 ? 'front' : `side:${f.angle}`}
-                onFaceClick={() => faceClick(f.offset)}
-              />
-            ))}
+          <div className="drum-view">
+            <button
+              className="drum-nav drum-prev"
+              onClick={() => spin(-1)}
+              aria-label="Previous photo"
+              title="Previous (←)"
+            >
+              ◀
+            </button>
+            <div
+              ref={drumRef}
+              className="drum"
+              role="button"
+              aria-label="Posted photos on a rotating tube; click the front image to zoom"
+              tabIndex={0}
+              onKeyDown={(e) => {
+                if ((e.key === 'Enter' || e.key === ' ') && !spinning.current) {
+                  e.preventDefault()
+                  setZoomIndex(idx)
+                }
+              }}
+            >
+              {faces.map((f) => (
+                <DrumFace
+                  key={f.angle}
+                  photo={f.photo}
+                  angle={f.angle}
+                  depth={RADIUS}
+                  width={WIDTH}
+                  imgKey={f.offset === 0 ? 'front' : `side:${f.angle}`}
+                  onFaceClick={() => faceClick(f.offset)}
+                />
+              ))}
+            </div>
+            <button
+              className="drum-nav drum-next"
+              onClick={() => spin(1)}
+              aria-label="Next photo"
+              title="Next (→)"
+            >
+              ▶
+            </button>
           </div>
-          <button
-            className="drum-nav drum-next"
-            onClick={() => spin(1)}
-            aria-label="Next photo"
-            title="Next (→)"
-          >
-            ▶
-          </button>
         </div>
         <div className="drum-count">
           {String(Math.min(idx, count - 1) + 1).padStart(2, '0')} <em>/</em> {String(count).padStart(2, '0')}

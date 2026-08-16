@@ -262,18 +262,6 @@ html.lenis body {
   transform: scaleX(1);
   transform-origin: left;
 }
-.nav-links .admin-link {
-  color: var(--ink-3);
-  font-size: 10px;
-  border: 1px solid var(--line);
-  border-radius: 100px;
-  padding: 6px 14px;
-  transition: color 0.3s ease, border-color 0.3s ease;
-}
-.nav-links .admin-link:hover {
-  color: var(--accent);
-  border-color: var(--accent-soft);
-}
 .nav-links .theme-toggle {
   font-size: 14px;
   line-height: 1;
@@ -287,6 +275,90 @@ html.lenis body {
   color: var(--accent);
   border-color: var(--accent-soft);
   transform: rotate(12deg);
+}
+
+.nav-burger {
+  display: none;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 7px;
+  width: 44px;
+  height: 44px;
+  border: 1px solid var(--line);
+  border-radius: 100px;
+  transition: border-color 0.3s ease;
+}
+.nav-burger span {
+  display: block;
+  width: 18px;
+  height: 1.5px;
+  background: var(--ink-2);
+  border-radius: 2px;
+  transition: transform 0.4s var(--ease), background 0.3s ease;
+}
+.nav-burger:hover span {
+  background: var(--accent);
+}
+.nav-burger.open span:first-child {
+  transform: translateY(4.25px) rotate(45deg);
+}
+.nav-burger.open span:last-child {
+  transform: translateY(-4.25px) rotate(-45deg);
+}
+
+.nav-menu {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 9400;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(26px, 5vh, 40px);
+  background: var(--bg);
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.4s var(--ease), visibility 0.4s;
+}
+.nav-menu-link {
+  font-family: var(--font-display);
+  font-size: clamp(30px, 8vw, 44px);
+  font-weight: 300;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-2);
+  transition: color 0.3s ease, transform 0.3s var(--ease);
+}
+.nav-menu-link:hover,
+.nav-menu-link.active {
+  color: var(--accent);
+}
+.nav-menu-theme {
+  margin-top: 12px;
+  font-size: 14px;
+  letter-spacing: 0.26em;
+  border: 1px solid var(--line);
+  border-radius: 100px;
+  padding: 12px 24px;
+  color: var(--ink-2);
+}
+.nav-menu-theme:hover {
+  color: var(--accent);
+  border-color: var(--accent-soft);
+}
+
+@media (max-width: 900px) {
+  .nav-burger {
+    display: flex;
+  }
+  .nav-menu {
+    display: flex;
+  }
+  .nav-menu.open {
+    opacity: 1;
+    visibility: visible;
+  }
 }
 
 /* ------------------------------------------------------------------ */
@@ -984,6 +1056,40 @@ html.lenis body {
   flex-wrap: wrap;
   margin-top: 34px;
 }
+.studio-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  flex-wrap: wrap;
+  margin-bottom: 24px;
+  padding: 14px 18px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: var(--bg-2);
+}
+.studio-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  font-size: 13px;
+  color: var(--ink-2);
+}
+.status-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #e0866b;
+}
+.status-dot.online {
+  background: var(--accent);
+  box-shadow: 0 0 8px rgba(201, 169, 106, 0.5);
+}
+.studio-toolbar .btn {
+  margin: 0;
+  padding: 8px 16px;
+  font-size: 13px;
+}
 .admin-actions .btn.secondary {
   border-color: var(--line);
   color: var(--ink-2);
@@ -1251,6 +1357,11 @@ html.lenis body {
   padding: 34px 0 10px;
   perspective: 1500px;
 }
+.drum-view {
+  position: relative;
+  width: 100%;
+  overflow-x: clip;
+}
 .drum-rim {
   position: absolute;
   left: 50%;
@@ -1380,10 +1491,10 @@ html.lenis body {
   background: var(--bg-3);
 }
 .drum-prev {
-  left: -20px;
+  left: 10px;
 }
 .drum-next {
-  right: -20px;
+  right: 10px;
 }
 
 .drum-count {
@@ -1623,6 +1734,9 @@ html.lenis body {
 /* ------------------------------------------------------------------ */
 
 @media (max-width: 900px) {
+  .nav-links {
+    display: none;
+  }
   .intro-grid {
     grid-template-columns: 1fr;
   }
@@ -1635,14 +1749,31 @@ html.lenis body {
   .admin-gallery {
     grid-template-columns: 1fr;
   }
-  .nav-links {
-    gap: 20px;
-  }
 }
 
 @media (max-width: 640px) {
   .cat-grid {
     grid-template-columns: 1fr;
+  }
+  .intro-media::after {
+    right: 0;
+  }
+  .lightbox-meta {
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  .lightbox-meta .title {
+    font-size: 19px;
+  }
+  .lightbox-dl {
+    right: 14px;
+    bottom: 14px;
+  }
+  .lightbox-close {
+    top: 16px;
+    right: 16px;
+    width: 42px;
+    height: 42px;
   }
 }
 
@@ -1662,5 +1793,41 @@ html.lenis body {
   .admin-item img {
     width: 56px;
     height: 56px;
+  }
+  .admin-item .ai-fields {
+    flex-direction: column;
+    gap: 8px;
+  }
+  .admin-item input.ai-title {
+    width: 100%;
+    min-width: 0;
+  }
+  .login-card {
+    padding: 26px 20px;
+  }
+  .dropzone {
+    padding: 34px 18px;
+  }
+  .admin-edit {
+    padding: 20px 18px;
+  }
+  .confirm-card {
+    padding: 26px 22px;
+  }
+  .ac-item {
+    grid-template-columns: 1fr auto;
+    gap: 12px;
+  }
+  .form .btn {
+    width: 100%;
+    justify-content: center;
+  }
+  .footer {
+    padding: 40px 0;
+  }
+  .footer-inner {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 18px;
   }
 }

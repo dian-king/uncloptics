@@ -70,5 +70,17 @@ for (const [cat, urls] of Object.entries(cats)) {
 
 photos.forEach((p, i) => { if (i % 8 === 0) p.featured = true })
 
-writeFileSync(join(ROOT, 'src', 'data', 'photos.json'), JSON.stringify({ photos }, null, 2))
-console.log(`done. ${photos.length} photos written to manifest.`)
+const categories = Object.keys(cats)
+const featuredCategories = categories.slice(0, 2)
+const hero = photos
+  .filter((p) => p.featured)
+  .slice(0, 7)
+  .map((p) => p.id)
+  .concat(photos.filter((p) => p.title === 'Free-dom' || p.title === 'Kigali').map((p) => p.id))
+  .slice(0, 9)
+
+writeFileSync(
+  join(ROOT, 'src', 'data', 'photos.json'),
+  JSON.stringify({ photos, categories, featuredCategories, hero }, null, 2)
+)
+console.log(`done. ${photos.length} photos written to manifest (${categories.length} categories, ${hero.length} hero ids).`)

@@ -2,10 +2,10 @@ import { Link } from 'react-router-dom'
 import { usePhotos } from '../hooks/usePhotos'
 import Reveal from '../components/Reveal'
 import ParallaxImage from '../components/ParallaxImage'
+import { photoUrl } from '../lib/photoUrl'
 
 export default function PortfolioPage() {
   const { photos, categories, featuredCategories } = usePhotos()
-  const base = import.meta.env.BASE_URL
 
   const ordered = [...categories].sort((a, b) => {
     const fa = featuredCategories.includes(a) ? 0 : 1
@@ -37,7 +37,7 @@ export default function PortfolioPage() {
           <Reveal key={category} delay={i * 90} className="cat-card-wrap">
             <Link to={`/portfolio/${encodeURIComponent(category)}`} className="cat-card">
               {photo && (
-                <ParallaxImage src={`${base}${photo.thumb}`} alt={photo.alt} speed={0.12} />
+                <ParallaxImage src={photoUrl(photo.thumb)} alt={photo.alt} speed={0.12} />
               )}
               <div className="cat-card-overlay">
                 {featured && <span className="cat-badge">Featured</span>}

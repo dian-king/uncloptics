@@ -1,12 +1,9 @@
 import Reveal from '../components/Reveal'
 import ParallaxImage from '../components/ParallaxImage'
-import { usePhotos } from '../hooks/usePhotos'
 import { site } from '../data/site'
 
 export default function AboutPage() {
-  const { photos } = usePhotos()
   const base = import.meta.env.BASE_URL
-  const portrait = photos.find((p) => p.category === 'People' && p.featured) || photos.find((p) => p.category === 'People')
 
   return (
     <div className="page container">
@@ -30,11 +27,13 @@ export default function AboutPage() {
             </a>
           </div>
         </Reveal>
-        {portrait && (
-          <Reveal className="intro-media" delay={220}>
-            <ParallaxImage src={`${base}${portrait.thumb}`} alt={portrait.alt} speed={0.16} />
-          </Reveal>
-        )}
+        <Reveal className="intro-media" delay={220}>
+          <ParallaxImage
+            src={`${base}owner-thumb.jpg`}
+            alt={`${site.photographer} — ${site.name}`}
+            speed={0.16}
+          />
+        </Reveal>
       </div>
     </div>
   )

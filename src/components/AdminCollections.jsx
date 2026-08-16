@@ -1,7 +1,5 @@
 import { useState } from 'react'
-
-const base = import.meta.env.BASE_URL
-const API = `${base}api/collections`
+import { apiFetch } from '../lib/api'
 
 export default function AdminCollections({ categories, featuredCategories, photos, onChanged }) {
   const [name, setName] = useState('')
@@ -19,10 +17,9 @@ export default function AdminCollections({ categories, featuredCategories, photo
     setBusy(true)
     setError('')
     try {
-      const res = await fetch(API, {
+      const res = await apiFetch('api/collections', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name: value }),
+        body: { name: value },
       })
       if (!res.ok) throw new Error(`api ${res.status}`)
       setName('')
@@ -36,10 +33,9 @@ export default function AdminCollections({ categories, featuredCategories, photo
   const toggleFeatured = async (cat, featured) => {
     setError('')
     try {
-      const res = await fetch(`${API}/${encodeURIComponent(cat)}`, {
+      const res = await apiFetch(`api/collections/${encodeURIComponent(cat)}`, {
         method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ featured }),
+        body: { featured },
       })
       if (!res.ok) throw new Error(`api ${res.status}`)
       await onChanged()
@@ -53,7 +49,7 @@ export default function AdminCollections({ categories, featuredCategories, photo
     setConfirm(null)
     setError('')
     try {
-      const res = await fetch(`${API}/${encodeURIComponent(cat)}`, { method: 'DELETE' })
+      const res = await apiFetch(`api/collections/${encodeURIComponent(cat)}`, { method: 'DELETE' })
       if (!res.ok) throw new Error(`api ${res.status}`)
       await onChanged()
     } catch {

@@ -1,10 +1,12 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { stopScroll, startScroll } from '../lib/scroll'
+import { photoUrl } from '../lib/photoUrl'
 
 export default function Lightbox({ photos, index, onClose, onNav }) {
   const photo = photos[index]
   const [loaded, setLoaded] = useState(false)
-  const base = import.meta.env.BASE_URL
+  const rootRef = useRef(null)
+  const closeRef = useRef(null)
 
   const prev = () => {
     setLoaded(false)
@@ -33,9 +35,38 @@ export default function Lightbox({ photos, index, onClose, onNav }) {
     }
   }, [index, photos.length])
 
+  useEffect(() => {
+    const prevFocus = document.activeElement
+    closeRef.current?.focus()
+
+    const onTab = (e) => {
+      if (e.key !== 'Tab') return
+      const root = rootRef.current
+      if (!root) return
+      const focusables = Array.from(root.querySelectorAll('button, a[href], input, [tabindex]:not([tabindex="-1"])'))
+      if (!focusables.length) return
+      const first = focusables[0]
+      const last = focusables[focusables.length - 1]
+      if (e.shiftKey) {
+        if (document.activeElement === first || !root.contains(document.activeElement)) {
+          e.preventDefault()
+          last.focus()
+        }
+      } else if (document.activeElement === last) {
+        e.preventDefault()
+        first.focus()
+      }
+    }
+    window.addEventListener('keydown', onTab)
+    return () => {
+      window.removeEventListener('keydown', onTab)
+      if (prevFocus && typeof prevFocus.focus === 'function') prevFocus.focus()
+    }
+  }, [])
+
   return (
-    <div className="lightbox" onClick={onClose} role="dialog" aria-modal="true">
-      <button className="lightbox-close" onClick={onClose} aria-label="Close">
+    <div className="lightbox" onClick={onClose} role="dialog" aria-modal="true" ref={rootRef}>
+      <button className="lightbox-close" onClick={onClose} aria-label="Close" ref={closeRef}>
         ×
       </button>
 
@@ -48,7 +79,7 @@ export default function Lightbox({ photos, index, onClose, onNav }) {
         <img
           key={photo.id}
           className="lightbox-image"
-          src={base + photo.url}
+          src={photoUrl(photo.url)}
           alt={photo.alt}
           draggable={false}
           onContextMenu={(e) => e.preventDefault()}
@@ -57,7 +88,7 @@ export default function Lightbox({ photos, index, onClose, onNav }) {
         />
         <a
           className="lightbox-dl"
-          href={base + photo.url}
+          href={photoUrl(photo.url)}
           download={photo.alt}
           target="_blank"
           rel="noreferrer"

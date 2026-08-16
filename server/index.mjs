@@ -13,5 +13,5 @@ app.use(express.static(DIST))
 
 app.listen(PORT, () => {
   console.log(`Lumiere serving at http://localhost:${PORT}`)
-  console.log(`Studio: http://localhost:${PORT}/#/admin`)
+  console.log(`Studio: http://localhost:${PORT}/#/studio-vault`)
 })

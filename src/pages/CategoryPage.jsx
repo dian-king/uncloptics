@@ -4,12 +4,12 @@ import { usePhotos } from '../hooks/usePhotos'
 import Reveal from '../components/Reveal'
 import ParallaxImage from '../components/ParallaxImage'
 import Lightbox from '../components/Lightbox'
+import { photoUrl } from '../lib/photoUrl'
 
 export default function CategoryPage() {
   const { category } = useParams()
   const { photos, categories } = usePhotos()
   const [active, setActive] = useState(null)
-  const base = import.meta.env.BASE_URL
 
   const list = photos.filter((p) => p.category === category)
   const title = categories.find((c) => c === category) || category
@@ -41,8 +41,24 @@ export default function CategoryPage() {
 
       <div className="masonry">
         {list.map((p, i) => (
-          <figure key={p.id} className="tile" style={{ animationDelay: `${Math.min(i, 14) * 45}ms` }} onClick={() => setActive(i)} onContextMenu={(e) => e.preventDefault()}>
-            <ParallaxImage src={`${base}${p.thumb}`} alt={p.alt} speed={0.1} />
+          <figure
+            key={p.id}
+            className="tile"
+            style={{ animationDelay: `${Math.min(i, 14) * 45}ms` }}
+            onClick={() => setActive(i)}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault()
+                setActive(i)
+              }
+            }}
+            onContextMenu={(e) => e.preventDefault()}
+            role="button"
+            tabIndex={0}
+            aria-haspopup="dialog"
+            aria-label={`Open ${p.title}`}
+          >
+            <ParallaxImage src={photoUrl(p.thumb)} alt={p.alt} speed={0.1} />
             <figcaption>
               <span className="tile-title">{p.title}</span>
               <span className="tile-cat">{p.category}</span>

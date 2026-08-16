@@ -3,6 +3,7 @@ import { Canvas, useFrame, useLoader, useThree } from '@react-three/fiber'
 import * as THREE from 'three'
 import { usePhotos } from '../hooks/usePhotos'
 import { subscribeTheme } from '../lib/theme'
+import { photoUrl } from '../lib/photoUrl'
 
 const DARK_FOG = '#08080b'
 const LIGHT_FOG = '#f4ead8'
@@ -98,9 +99,7 @@ function Particles({ count = 240, color = '#c9a96a' }) {
 }
 
 export default function HeroScene() {
-  const { photos } = usePhotos()
-  const featured = photos.filter((p) => p.featured).slice(0, 6)
-  const base = import.meta.env.BASE_URL
+  const { photos, hero } = usePhotos()
   const [fog, setFog] = useState(DARK_FOG)
 
   useEffect(() => {
@@ -123,18 +122,23 @@ export default function HeroScene() {
   ]
 
   const layout = useMemo(() => {
-    const extras = ['p34', 'p44', 'p08']
+    const fallbackIds = photos
+      .filter((p) => p.featured)
+      .slice(0, 6)
+      .map((p) => p.id)
+      .concat(['p34', 'p44', 'p08'])
+    const ids = hero.length ? hero : fallbackIds
+    return ids
       .map((id) => photos.find((p) => p.id === id))
       .filter(Boolean)
-    const list = [...featured, ...extras].slice(0, slots.length)
-    return list.map((p, i) => ({
-      url: base + p.url,
-      position: slots[i].pos,
-      rotation: slots[i].rot,
-      size: slots[i].size,
-      drift: slots[i].drift,
-    }))
-  }, [featured, photos, base])
+      .slice(0, slots.length)
+      .map((p, i) => ({
+        url: photoUrl(p.url),
+        position: slots[i].pos,
+        rotation: slots[i].rot,
+        size: slots[i].size,
+      }))
+  }, [photos, hero])
 
   return (
     <div className="hero-canvas">

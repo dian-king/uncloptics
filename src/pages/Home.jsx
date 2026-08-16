@@ -6,15 +6,13 @@ import ParallaxImage from '../components/ParallaxImage'
 import Reveal from '../components/Reveal'
 import { scrollToTarget } from '../lib/scroll'
 import { site } from '../data/site'
-import { usePhotos } from '../hooks/usePhotos'
 
 const HeroScene = lazy(() => import('../components/HeroScene'))
 
 export default function Home() {
   const location = useLocation()
-  const { photos } = usePhotos()
   const base = import.meta.env.BASE_URL
-  const portrait = photos.find((p) => p.category === 'People' && p.featured) || photos.find((p) => p.category === 'People')
+  const ownerAlt = `${site.photographer} — ${site.name}`
 
   useEffect(() => {
     if (location.state?.scrollTo === 'work') {
@@ -57,15 +55,9 @@ export default function Home() {
               Learn more →
             </Link>
           </Reveal>
-          {portrait && (
-            <Reveal className="intro-media" delay={120}>
-              <ParallaxImage
-                src={`${base}${portrait.thumb}`}
-                alt={portrait.alt}
-                speed={0.16}
-              />
-            </Reveal>
-          )}
+          <Reveal className="intro-media" delay={120}>
+            <ParallaxImage src={`${base}owner-thumb.jpg`} alt={ownerAlt} speed={0.16} />
+          </Reveal>
         </div>
       </section>
 

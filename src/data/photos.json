@@ -112,13 +112,14 @@
     },
     {
       "id": "p12",
-      "title": "Untitled",
+      "title": "inyambo",
       "category": "People",
       "alt": "54668830983_7c8ca72386_o",
-      "featured": false,
+      "featured": true,
       "url": "photos/p12.jpg",
       "thumb": "thumbnails/t12.jpg",
-      "source": "uncloptics"
+      "source": "uncloptics",
+      "description": "A girl dancing next to inyambo"
     },
     {
       "id": "p13",
@@ -519,9 +520,18 @@
     "Lifestyle"
   ],
   "featuredCategories": [
-    "Lifestyle",
-    "Wildlife",
-    "People",
-    "Nature"
+    "Nature",
+    "People"
+  ],
+  "hero": [
+    "p01",
+    "p02",
+    "p17",
+    "p25",
+    "p33",
+    "p41",
+    "p49",
+    "p34",
+    "p44"
   ]
 }

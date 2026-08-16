@@ -3,6 +3,7 @@ import { usePhotos } from '../hooks/usePhotos'
 import Reveal from './Reveal'
 import ParallaxImage from './ParallaxImage'
 import Lightbox from './Lightbox'
+import { photoUrl } from '../lib/photoUrl'
 
 export default function Gallery() {
   const { photos, categories } = usePhotos()
@@ -32,8 +33,24 @@ export default function Gallery() {
 
         <div key={filter} className="masonry">
           {filtered.map((p, i) => (
-            <figure key={p.id} className="tile" style={{ animationDelay: `${Math.min(i, 14) * 45}ms` }} onClick={() => setActive(i)} onContextMenu={(e) => e.preventDefault()}>
-              <ParallaxImage src={p.thumb} alt={p.alt} speed={0.1} />
+            <figure
+              key={p.id}
+              className="tile"
+              style={{ animationDelay: `${Math.min(i, 14) * 45}ms` }}
+              onClick={() => setActive(i)}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                  e.preventDefault()
+                  setActive(i)
+                }
+              }}
+              onContextMenu={(e) => e.preventDefault()}
+              role="button"
+              tabIndex={0}
+              aria-haspopup="dialog"
+              aria-label={`Open ${p.title}`}
+            >
+              <ParallaxImage src={photoUrl(p.thumb)} alt={p.alt} speed={0.1} />
               <figcaption>
                 <span className="tile-title">{p.title}</span>
                 <span className="tile-cat">{p.category}</span>

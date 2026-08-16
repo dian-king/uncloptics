@@ -68,7 +68,7 @@ const main = async () => {
   console.log('05-contact.png')
 
   // Admin login
-  await page.goto(BASE + '/#/admin', { waitUntil: 'domcontentloaded', timeout: 15000 })
+  await page.goto(BASE + '/#/studio-vault', { waitUntil: 'domcontentloaded', timeout: 15000 })
   await page.waitForSelector('.login-card', { timeout: 10000 })
   await sleep(800)
   await page.screenshot({ path: join(out, '06-admin-login.png') })
