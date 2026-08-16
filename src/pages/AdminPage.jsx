@@ -28,6 +28,7 @@ function handleUploadUrl() {
 
 function Login({ onAuthed }) {
   const [pw, setPw] = useState('')
+  const [show, setShow] = useState(false)
   const [error, setError] = useState('')
   const [busy, setBusy] = useState(false)
 
@@ -41,8 +42,12 @@ function Login({ onAuthed }) {
       if (res.ok && data.token) {
         setToken(data.token)
         onAuthed()
-      } else {
+      } else if (res.status === 429) {
+        setError('Too many attempts — wait a few minutes, then try again.')
+      } else if (res.status === 401) {
         setError('That password is not correct.')
+      } else {
+        setError('Something went wrong on the server — please try again.')
       }
     } catch {
       setError('Could not reach the server — is it running?')
@@ -55,7 +60,26 @@ function Login({ onAuthed }) {
       <form onSubmit={submit}>
         <div className="field">
           <label htmlFor="pw">Studio password</label>
-          <input id="pw" type="password" autoFocus value={pw} onChange={(e) => setPw(e.target.value)} placeholder="••••••••" />
+          <div className="pw-field">
+            <input
+              id="pw"
+              type={show ? 'text' : 'password'}
+              autoFocus
+              value={pw}
+              onChange={(e) => setPw(e.target.value)}
+              placeholder="••••••••"
+            />
+            <button
+              type="button"
+              className="pw-toggle"
+              onClick={() => setShow((s) => !s)}
+              aria-label={show ? 'Hide password' : 'Show password'}
+              title={show ? 'Hide password' : 'Show password'}
+              tabIndex={-1}
+            >
+              {show ? 'Hide' : 'Show'}
+            </button>
+          </div>
         </div>
         {error && <p className="login-error">{error}</p>}
         <button type="submit" className="btn" disabled={busy || !pw}>
