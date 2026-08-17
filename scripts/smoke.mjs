@@ -62,7 +62,7 @@ async function main() {
     await page.goto(BASE + '/', { waitUntil: 'domcontentloaded', timeout: 20000 })
     await page.waitForSelector('.hero-title', { timeout: 15000 })
     const text = await page.$eval('.hero-title', (el) => el.textContent)
-    if (!text.includes('Uncloptics')) throw new Error('hero title missing')
+    if (!text.includes('Joël')) throw new Error('hero title missing')
   })
 
   await check('webgl hero scene mounts', async () => {

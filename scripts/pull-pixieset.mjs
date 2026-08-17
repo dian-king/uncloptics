@@ -62,7 +62,7 @@ for (const [cat, urls] of Object.entries(cats)) {
       featured: false,
       url: `photos/p${num}.jpg`,
       thumb: `thumbnails/t${num}.jpg`,
-      source: 'uncloptics',
+      source: 'joel',
     })
     console.log(`[ok] p${num}.jpg <- ${cat}`)
   }

@@ -1,4 +1,4 @@
-const KEY = 'uncloptics:theme'
+const KEY = 'joel:theme'
 const listeners = new Set()
 
 function initial() {

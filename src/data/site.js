@@ -1,5 +1,5 @@
 export const site = {
-  name: 'Uncloptics',
+  name: 'Joël',
   logo: 'IJ',
   photographer: 'Joel Ishimwe',
   tagline: 'Everyone is made to creating soulful imagery',
