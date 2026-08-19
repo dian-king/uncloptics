@@ -1,11 +1,10 @@
 import { apiMount } from '../server/api.mjs'
 
 export default function handler(req, res) {
-  if (!req.url) {
+  if (!req.url || !req.url.startsWith('/api/')) {
     const slug = req.query && req.query.slug
-    if (Array.isArray(slug)) req.url = `/${slug.join('/')}`
-    else if (slug) req.url = `/${slug}`
-    else req.url = '/'
+    const slugPath = Array.isArray(slug) ? slug.join('/') : slug || ''
+    req.url = `/api/${slugPath}`
   }
   apiMount(req, res, () => {
     send404(res)
