@@ -216,7 +216,7 @@ Other common edits:
   photo as featured, the `featuredCategories` array controls which collections appear on the
   home page, and the `hero` array lists (in order) which photo ids the 3D hero shows.
 - **Canonical URL / social preview** — `index.html` holds the canonical link, `og:image`,
-  and JSON-LD `url`; all point at `https://uncloptics.vercel.app/`. Update them if the site
+  and JSON-LD `url`; all point at `https://ishimwejoel.rw/`. Update them if the site
   is served from a different domain.
 - **Admin password** — set the `ADMIN_PASSWORD` environment variable when starting the
   server (default: `lumiere`) or in the Vercel dashboard for deployed sites. Example:
