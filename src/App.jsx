@@ -8,7 +8,6 @@ import CategoryPage from './pages/CategoryPage'
 import AboutPage from './pages/AboutPage'
 import ContactPage from './pages/ContactPage'
 import AdminPage from './pages/AdminPage'
-import DemoPage from './pages/DemoPage'
 import { initLenis, scrollToTop } from './lib/scroll'
 
 function ScrollToTop() {
@@ -37,7 +36,6 @@ export default function App() {
           <Route path="/about" element={<AboutPage />} />
           <Route path="/contact" element={<ContactPage />} />
           <Route path="/studio-vault" element={<AdminPage />} />
-          <Route path="/demo" element={<DemoPage />} />
         </Routes>
       </main>
       <Footer />
