@@ -17,7 +17,7 @@ export default function AboutPage() {
       <div className="about-grid">
         <Reveal className="about-text" delay={100}>
           <p className="about-lead">{site.bio}</p>
-          <p className="signature" style={{ marginTop: 34 }}>— {site.photographer}, {site.name}</p>
+          <p className="signature" style={{ marginTop: 34 }}>— {site.photographer}</p>
           <div className="about-actions">
             <a className="btn" href={site.instagram} target="_blank" rel="noreferrer">
               Follow {site.instagramHandle} <span className="btn-arrow">→</span>
